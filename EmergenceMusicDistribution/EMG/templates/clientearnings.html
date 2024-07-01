@@ -1,0 +1,132 @@
+{% include 'adminheader.html' %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Title</title>
+    <link rel="stylesheet" href="/static/scss/filter.css">
+</head>
+<body>
+    <div class="container" style="background-image: url('/static/img/bg.jpg'); padding: 20px;">
+        <div class="filter-form">
+            <center><h2 style="color: white;">Client Earnings</h2></center>
+            <div class="form-group">
+                <label for="start_date" style="color: white;">Start Date:</label>
+                <input type="date" id="start_date" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="end_date" style="color: white;">End Date:</label>
+                <input type="date" id="end_date" class="form-control">
+            </div>
+            <button onclick="filterData()" class="btn btn-primary">Filter</button>
+        </div>
+        <canvas id="earningsChart" style="margin-top: 20px;"></canvas>
+    </div>
+    <br />
+    <br />
+    <br />
+    {% include 'footer.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            console.log("DOM fully loaded and parsed");  // Debug statement
+            fetchEarningsData();
+        });
+
+        function fetchEarningsData(startDate = '', endDate = '') {
+            console.log("Fetching data with startDate:", startDate, "and endDate:", endDate);  // Debug statement
+            const url = `/admin/earnings_data?start_date=${startDate}&end_date=${endDate}`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok " + response.statusText);
+                    }
+                    console.log("Response received:", response);  // Debug statement
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Fetched data:", data);  // Debug statement
+                    renderChart(data);
+                })
+                .catch(error => console.error("Error fetching data:", error));  // Error handling
+        }
+
+        function filterData() {
+            const startDate = document.getElementById('start_date').value;
+            const endDate = document.getElementById('end_date').value;
+            console.log("Filtering data from", startDate, "to", endDate);  // Debug statement
+            fetchEarningsData(startDate, endDate);
+        }
+
+        let chart;
+
+        function renderChart(data) {
+            console.log("Rendering chart with data:", data);
+
+            if (!data || data.length === 0) {
+                console.warn("No data to display in chart");
+                return;
+            }
+
+            const ctx = document.getElementById('earningsChart');
+            if (!ctx) {
+                console.error("Canvas element 'earningsChart' not found");
+                return;
+            }
+
+            const labels = data.map(item => item.date);
+            const earnings = data.map(item => item.earnings);
+
+            console.log("Chart labels:", labels);
+            console.log("Chart earnings:", earnings);
+
+            // Chart.js code to create chart with data
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Earnings',
+                        data: earnings,
+                        borderColor: 'red',  // Set line color here
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'  // Set legend label color to white
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'  // Set X axis grid color to white with opacity
+                            },
+                            ticks: {
+                                color: 'white'  // Set X axis tick color to white
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'  // Set Y axis grid color to white with opacity
+                            },
+                            ticks: {
+                                color: 'white'  // Set Y axis tick color to white
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update the global chart variable if needed
+            chart = chart;
+        }
+    </script>
+
+</body>
+</html>

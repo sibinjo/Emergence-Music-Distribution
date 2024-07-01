@@ -1,0 +1,45 @@
+/* Styling for the form container */
+.filter-form {
+    max-width: 400px;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+    /* Styling for form labels */
+    .filter-form label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    /* Styling for form inputs */
+    .filter-form input[type="date"],
+    .filter-form button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    /* Styling for the Filter button */
+    .filter-form button {
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+
+        /* Hover effect for the Filter button */
+        .filter-form button:hover {
+            background-color: #45a049;
+        }
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .filter-form {
+        width: 90%;
+    }
+}
